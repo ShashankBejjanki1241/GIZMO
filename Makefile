@@ -1,5 +1,5 @@
 # 🚀 **Gizmo AI - Development Automation**
-# Comprehensive development commands and automation
+# Development commands and automation
 #
 # Developer: Shashank B
 # Repository: https://github.com/ShashankBejjanki1241/GIZMO
@@ -223,12 +223,12 @@ quickstart: ## Quick start for new developers
 	@echo "$(GREEN)🌐 Open http://localhost:3002 to see the UI!$(NC)"
 
 # =============================================================================
-# 🎯 **Portfolio & Demo Commands**
+# 🎯 **Gizmo Demo Commands**
 # =============================================================================
 
 .PHONY: demo
-demo: ## Run complete portfolio demonstration
-	@echo "$(GREEN)🎬 Running Gizmo AI Portfolio Demo$(NC)"
+demo: ## Run complete demonstration
+	@echo "$(GREEN)🎬 Running Gizmo AI Demo$(NC)"
 	@echo "================================"
 	@echo "$(YELLOW)1. Starting development stack...$(NC)"
 	@make up
@@ -243,17 +243,17 @@ demo: ## Run complete portfolio demonstration
 	@echo "$(GREEN)🎉 Demo completed! Open http://localhost:3002$(NC)"
 
 .PHONY: portfolio
-portfolio: ## Show portfolio-ready features
-	@echo "$(GREEN)🎯 Gizmo AI Portfolio Features$(NC)"
+portfolio: ## Show Gizmo features
+	@echo "$(GREEN)🎯 Gizmo AI Features$(NC)"
 	@echo "================================"
 	@echo "$(GREEN)✅ Multi-Agent AI Development Platform$(NC)"
 	@echo "$(GREEN)✅ Enterprise-Grade Reliability Features$(NC)"
 	@echo "$(GREEN)✅ Professional UI with Real-time Updates$(NC)"
-	@echo "$(GREEN)✅ Comprehensive Testing & Documentation$(NC)"
+	@echo "$(GREEN)✅ Testing & Documentation$(NC)"
 	@echo "$(GREEN)✅ Production Deployment Ready$(NC)"
 	@echo "$(GREEN)✅ Cost-Controlled Public Demo$(NC)"
 	@echo ""
-	@echo "$(YELLOW)🚀 Ready for portfolio demonstration!$(NC)"
+	@echo "$(YELLOW)🚀 Ready for Gizmo demonstration!$(NC)"
 
 # =============================================================================
 # 📋 **Default Target**

@@ -1,11 +1,11 @@
-# Multi-Agent AI Developer - Development Makefile
+# Gizmo AI - Development Makefile
 # One-liner commands for managing the local development stack
 
 .PHONY: help up down build logs clean health test
 
 # Default target
 help:
-	@echo "Multi-Agent AI Developer - Development Commands"
+	@echo "Gizmo AI - Development Commands"
 	@echo ""
 	@echo "Stack Management:"
 	@echo "  up          - Bring up the entire stack (DB, Redis, API, UI, Orchestrator)"
@@ -38,7 +38,7 @@ help:
 
 # Bring up the entire stack
 up:
-	@echo "🚀 Starting Multi-Agent AI Developer stack..."
+	@echo "🚀 Starting Gizmo AI stack..."
 	docker-compose up -d
 	@echo "⏳ Waiting for services to be ready..."
 	@make health

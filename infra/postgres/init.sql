@@ -1,4 +1,4 @@
--- Multi-Agent AI Developer - PostgreSQL Initialization
+-- Gizmo AI - PostgreSQL Initialization
 -- This script sets up the initial database schema
 
 -- Create extensions

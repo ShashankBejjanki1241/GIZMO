@@ -1,5 +1,5 @@
 """
-Multi-Agent AI Developer - Orchestrator Engine
+Gizmo AI - Orchestrator Engine
 Main orchestration logic for coordinating agents
 """
 
@@ -42,14 +42,14 @@ request_count = 0
 async def lifespan(app: FastAPI):
     """Application lifespan manager"""
     # Startup
-    logger.info("Starting Multi-Agent AI Developer Orchestrator", version="0.1.0")
+    logger.info("Starting Gizmo AI Orchestrator", version="0.1.0")
     yield
     # Shutdown
-    logger.info("Shutting down Multi-Agent AI Developer Orchestrator")
+    logger.info("Shutting down Gizmo AI Orchestrator")
 
 # Create FastAPI application
 app = FastAPI(
-    title="Multi-Agent AI Developer Orchestrator",
+    title="Gizmo AI Orchestrator",
     description="Core orchestration engine for coordinating AI agents",
     version="0.1.0",
     lifespan=lifespan
@@ -119,7 +119,7 @@ async def log_requests(request: Request, call_next):
 async def root() -> Dict[str, Any]:
     """Root endpoint"""
     return {
-        "message": "Multi-Agent AI Developer Orchestrator",
+        "message": "Gizmo AI Orchestrator",
         "version": "0.1.0",
         "status": "running"
     }

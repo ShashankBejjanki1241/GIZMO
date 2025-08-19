@@ -1,4 +1,4 @@
-# PRD — Multi-Agent AI Developer
+# PRD — Gizmo AI
 
 ## Problem
 Great coding assistants exist, but end-to-end planning→coding→testing is opaque and unsafe. We want a transparent, safe, demo-able system.

@@ -1,5 +1,5 @@
 """
-Multi-Agent AI Developer - FastAPI Backend
+Gizmo AI - FastAPI Backend
 Main application entry point with health endpoints and logging
 """
 
@@ -43,15 +43,15 @@ request_count = 0
 async def lifespan(app: FastAPI):
     """Application lifespan manager"""
     # Startup
-    logger.info("Starting Multi-Agent AI Developer API", version="0.1.0")
+    logger.info("Starting Gizmo AI API", version="0.1.0")
     yield
     # Shutdown
-    logger.info("Shutting down Multi-Agent AI Developer API")
+    logger.info("Shutting down Gizmo AI API")
 
 # Create FastAPI application
 app = FastAPI(
-    title="Multi-Agent AI Developer API",
-    description="Backend API for the Multi-Agent AI Developer system",
+    title="Gizmo AI API",
+description="Backend API for the Gizmo AI system",
     version="0.1.0",
     lifespan=lifespan
 )
@@ -120,7 +120,7 @@ async def log_requests(request: Request, call_next):
 async def root() -> Dict[str, Any]:
     """Root endpoint"""
     return {
-        "message": "Multi-Agent AI Developer API",
+        "message": "Gizmo AI API",
         "version": "0.1.0",
         "status": "running"
     }

@@ -1,0 +1,47 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: aicode
+    ports: ["5432:5432"]
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+
+  api:
+    build:
+      context: ../
+      dockerfile: infra/dockerfiles/api.Dockerfile
+    env_file:
+      - ../api/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/aicode
+      - REDIS_URL=redis://redis:6379/0
+      - SANDBOX_IMAGE=aicode-sandbox:latest
+    depends_on:
+      - db
+      - redis
+    ports: ["8000:8000"]
+    volumes:
+      - ../:/workspace:cached
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # (Optional) app service scaffold — add Next.js later
+  app:
+    image: node:20
+    working_dir: /workspace/app
+    command: bash -lc "npm i && npm run dev"
+    volumes:
+      - ../:/workspace:cached
+    ports: ["3000:3000"]
+    depends_on:
+      - api
+
+volumes:
+  dbdata:

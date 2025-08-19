@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Multi-Agent AI Developer</title>
+        <title>Gizmo AI</title>
         <meta name="description" content="Transparent AI-assisted development system" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -39,7 +39,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Multi-Agent AI Developer
+              Gizmo AI
             </h1>
             <p className="text-xl text-gray-600 mb-8">
               Transparent, safe, and demo-able system for end-to-end AI-assisted development

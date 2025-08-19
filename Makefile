@@ -1,167 +1,257 @@
-# Gizmo AI - Development Makefile
-# One-liner commands for managing the local development stack
+# 🚀 **Gizmo AI - Development Automation**
 
-.PHONY: help up down build logs clean health test
+# Configuration
+COMPOSE_FILE = config/docker/docker-compose.yml
+PROJECT_NAME = gizmo-ai
+
+# Colors for output
+GREEN = \033[0;32m
+YELLOW = \033[1;33m
+RED = \033[0;31m
+NC = \033[0m # No Color
 
 # Default target
-help:
-	@echo "Gizmo AI - Development Commands"
-	@echo ""
-	@echo "Stack Management:"
-	@echo "  up          - Bring up the entire stack (DB, Redis, API, UI, Orchestrator)"
-	@echo "  down        - Stop all services"
-	@echo "  restart     - Restart all services"
-	@echo "  build       - Build all Docker images"
-	@echo ""
-	@echo "Monitoring:"
-	@echo "  logs        - Tail logs from all services"
-	@echo "  logs-api    - Tail API logs only"
-	@echo "  logs-ui     - Tail UI logs only"
-	@echo "  logs-orch   - Tail orchestrator logs only"
-	@echo "  health      - Check health of all services"
-	@echo ""
-	@echo "Development:"
-	@echo "  test        - Run all tests"
-	@echo "  test-api    - Run API tests only"
-	@echo "  test-ui     - Run UI tests only"
-	@echo "  clean       - Clean up containers, volumes, and images"
-	@echo ""
-	@echo "Database:"
-	@echo "  db-reset    - Reset database (WARNING: destroys all data)"
-	@echo "  db-shell    - Open PostgreSQL shell"
-	@echo "  db-backup   - Create database backup"
-	@echo ""
-	@echo "Quick Start:"
-	@echo "  make up     - Start everything"
-	@echo "  make health - Verify all services are healthy"
-	@echo "  make logs   - Monitor logs"
+.PHONY: help
+help: ## Show this help message
+	@echo "$(GREEN)Gizmo AI - Development Commands$(NC)"
+	@echo "================================"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(YELLOW)%-15s$(NC) %s\n", $$1, $$2}'
 
-# Bring up the entire stack
-up:
-	@echo "🚀 Starting Gizmo AI stack..."
-	docker-compose up -d
-	@echo "⏳ Waiting for services to be ready..."
-	@make health
-	@echo "✅ Stack is up and healthy!"
+# =============================================================================
+# 🚀 **Stack Management**
+# =============================================================================
 
-# Stop all services
-down:
-	@echo "🛑 Stopping all services..."
-	docker-compose down
+.PHONY: up
+up: ## Start the complete development stack
+	@echo "$(GREEN)🚀 Starting Gizmo AI development stack...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) up -d
+	@echo "$(GREEN)✅ Stack started!$(NC)"
+	@echo "$(YELLOW)📱 Frontend: http://localhost:3002$(NC)"
+	@echo "$(YELLOW)🚀 API: http://localhost:8002$(NC)"
+	@echo "$(YELLOW)🧠 Orchestrator: http://localhost:8003$(NC)"
+	@echo "$(YELLOW)🗄️ Database: localhost:5433$(NC)"
+	@echo "$(YELLOW)⚡ Redis: localhost:6379$(NC)"
 
-# Restart all services
-restart:
-	@echo "🔄 Restarting all services..."
-	docker-compose restart
-	@make health
+.PHONY: down
+down: ## Stop the development stack
+	@echo "$(YELLOW)🛑 Stopping Gizmo AI development stack...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) down
+	@echo "$(GREEN)✅ Stack stopped!$(NC)"
 
-# Build all Docker images
-build:
-	@echo "🔨 Building Docker images..."
-	docker-compose build --no-cache
+.PHONY: restart
+restart: ## Restart all services
+	@echo "$(YELLOW)🔄 Restarting Gizmo AI services...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) restart
+	@echo "$(GREEN)✅ Services restarted!$(NC)"
 
-# Tail logs from all services
-logs:
-	@echo "📋 Tailing logs from all services..."
-	docker-compose logs -f
+.PHONY: rebuild
+rebuild: ## Rebuild and restart all services
+	@echo "$(YELLOW)🔨 Rebuilding Gizmo AI services...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) down
+	@docker-compose -f $(COMPOSE_FILE) build --no-cache
+	@docker-compose -f $(COMPOSE_FILE) up -d
+	@echo "$(GREEN)✅ Services rebuilt and started!$(NC)"
 
-# Tail API logs only
-logs-api:
-	@echo "📋 Tailing API logs..."
-	docker-compose logs -f api
+# =============================================================================
+# 📊 **Monitoring & Debugging**
+# =============================================================================
 
-# Tail UI logs only
-logs-ui:
-	@echo "📋 Tailing UI logs..."
-	docker-compose logs -f ui
+.PHONY: logs
+logs: ## View logs from all services
+	@echo "$(GREEN)📋 Viewing logs from all services...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) logs -f
 
-# Tail orchestrator logs only
-logs-orch:
-	@echo "📋 Tailing orchestrator logs..."
-	docker-compose logs -f orchestrator
+.PHONY: logs-api
+logs-api: ## View API service logs
+	@echo "$(GREEN)📋 Viewing API service logs...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) logs -f api
 
-# Check health of all services
-health:
-	@echo "🏥 Checking service health..."
-	@echo "📊 API Health:"
-	@curl -s http://localhost:8002/healthz | jq . || echo "❌ API not responding"
-	@echo ""
-	@echo "📊 UI Health:"
-	@curl -s http://localhost:3002 | head -1 || echo "❌ UI not responding"
-	@echo ""
-	@echo "📊 Database Health:"
-	@docker-compose exec -T postgres pg_isready -U gizmo_user -d gizmo_dev || echo "❌ Database not responding"
-	@echo ""
-	@echo "📊 Redis Health:"
-	@docker-compose exec -T redis redis-cli ping || echo "❌ Redis not responding"
-	@echo ""
-	@echo "📊 Orchestrator Health:"
-	@curl -s http://localhost:8003/healthz | jq . || echo "❌ Orchestrator not responding"
+.PHONY: logs-ui
+logs-ui: ## View frontend service logs
+	@echo "$(GREEN)📋 Viewing frontend service logs...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) logs -f ui
 
-# Run all tests
-test:
-	@echo "🧪 Running all tests..."
-	@make test-api
-	@make test-ui
+.PHONY: logs-orch
+logs-orch: ## View orchestrator service logs
+	@echo "$(GREEN)📋 Viewing orchestrator service logs...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) logs -f orchestrator
 
-# Run API tests only
-test-api:
-	@echo "🧪 Running API tests..."
-	docker-compose exec api pytest
+.PHONY: status
+status: ## Check status of all services
+	@echo "$(GREEN)📊 Checking service status...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) ps
 
-# Run UI tests only
-test-ui:
-	@echo "🧪 Running UI tests..."
-	docker-compose exec ui npm test
+# =============================================================================
+# 🧪 **Testing & Validation**
+# =============================================================================
 
-# Clean up containers, volumes, and images
-clean:
-	@echo "🧹 Cleaning up..."
-	docker-compose down -v --rmi all
-	docker system prune -f
-	@echo "✅ Cleanup complete!"
+.PHONY: test
+test: ## Run all test suites
+	@echo "$(GREEN)🧪 Running Gizmo AI test suites...$(NC)"
+	@echo "$(YELLOW)Running unit tests...$(NC)"
+	@python3 -m pytest tests/unit/ -v
+	@echo "$(YELLOW)Running integration tests...$(NC)"
+	@python3 -m pytest tests/integration/ -v
+	@echo "$(YELLOW)Running end-to-end tests...$(NC)"
+	@python3 -m pytest tests/e2e/ -v
+	@echo "$(GREEN)✅ All tests completed!$(NC)"
 
-# Reset database (WARNING: destroys all data)
-db-reset:
-	@echo "⚠️  WARNING: This will destroy all database data!"
+.PHONY: test-unit
+test-unit: ## Run unit tests only
+	@echo "$(GREEN)🧪 Running unit tests...$(NC)"
+	@python3 -m pytest tests/unit/ -v
+
+.PHONY: test-integration
+test-integration: ## Run integration tests only
+	@echo "$(GREEN)🧪 Running integration tests...$(NC)"
+	@python3 -m pytest tests/integration/ -v
+
+.PHONY: test-e2e
+test-e2e: ## Run end-to-end tests only
+	@echo "$(GREEN)🧪 Running end-to-end tests...$(NC)"
+	@python3 -m pytest tests/e2e/ -v
+
+.PHONY: test-curated
+test-curated: ## Run the curated task suite
+	@echo "$(GREEN)🧪 Running curated task suite...$(NC)"
+	@python3 scripts/curated_tasks.py
+
+.PHONY: demo-ui
+demo-ui: ## Run the UI demonstration script
+	@echo "$(GREEN)🎬 Running UI demonstration...$(NC)"
+	@python3 scripts/demo_phase6.py
+
+# =============================================================================
+# 🗄️ **Database Operations**
+# =============================================================================
+
+.PHONY: db-shell
+db-shell: ## Open PostgreSQL shell
+	@echo "$(GREEN)🗄️ Opening PostgreSQL shell...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) exec postgres psql -U gizmo_user -d gizmo_dev
+
+.PHONY: db-backup
+db-backup: ## Create database backup
+	@echo "$(GREEN)🗄️ Creating database backup...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) exec postgres pg_dump -U gizmo_user -d gizmo_dev > backup_$(shell date +%Y%m%d_%H%M%S).sql
+	@echo "$(GREEN)✅ Backup created!$(NC)"
+
+.PHONY: db-reset
+db-reset: ## Reset database (WARNING: destroys data)
+	@echo "$(RED)⚠️  WARNING: This will destroy all data!$(NC)"
 	@read -p "Are you sure? Type 'yes' to confirm: " confirm; \
 	if [ "$$confirm" = "yes" ]; then \
-		echo "🗑️  Resetting database..."; \
-		docker-compose down postgres; \
-		docker volume rm gizmo_postgres_data; \
-		docker-compose up -d postgres; \
-		echo "✅ Database reset complete!"; \
+		echo "$(YELLOW)🗄️ Resetting database...$(NC)"; \
+		docker-compose -f $(COMPOSE_FILE) exec postgres psql -U gizmo_user -d gizmo_dev -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"; \
+		docker-compose -f $(COMPOSE_FILE) exec postgres psql -U gizmo_user -d gizmo_dev -f /docker-entrypoint-initdb.d/init.sql; \
+		echo "$(GREEN)✅ Database reset!$(NC)"; \
 	else \
-		echo "❌ Database reset cancelled"; \
+		echo "$(YELLOW)Database reset cancelled.$(NC)"; \
 	fi
 
-# Open PostgreSQL shell
-db-shell:
-	@echo "🐘 Opening PostgreSQL shell..."
-	docker-compose exec postgres psql -U gizmo_user -d gizmo_dev
+# =============================================================================
+# 🔧 **Development & Maintenance**
+# =============================================================================
 
-# Create database backup
-db-backup:
-	@echo "💾 Creating database backup..."
-	@mkdir -p backups
-	docker-compose exec -T postgres pg_dump -U gizmo_user -d gizmo_dev > backups/backup_$(shell date +%Y%m%d_%H%M%S).sql
-	@echo "✅ Backup created in backups/ directory"
+.PHONY: clean
+clean: ## Remove all containers, volumes, and images
+	@echo "$(RED)🧹 Cleaning up all Docker resources...$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) down -v --rmi all
+	@docker system prune -f
+	@echo "$(GREEN)✅ Cleanup completed!$(NC)"
 
-# Show service status
-status:
-	@echo "📊 Service Status:"
-	docker-compose ps
+.PHONY: health
+health: ## Check health of all services
+	@echo "$(GREEN)🏥 Checking service health...$(NC)"
+	@echo "$(YELLOW)Frontend (UI):$(NC)"
+	@curl -s http://localhost:3002 | head -1 || echo "$(RED)❌ Frontend not responding$(NC)"
+	@echo "$(YELLOW)API Backend:$(NC)"
+	@curl -s http://localhost:8002/healthz | python3 -m json.tool || echo "$(RED)❌ API not responding$(NC)"
+	@echo "$(YELLOW)Orchestrator:$(NC)"
+	@curl -s http://localhost:8003/healthz | python3 -m json.tool || echo "$(RED)❌ Orchestrator not responding$(NC)"
+	@echo "$(YELLOW)Database:$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) exec postgres pg_isready -U gizmo_user || echo "$(RED)❌ Database not responding$(NC)"
+	@echo "$(YELLOW)Redis:$(NC)"
+	@docker-compose -f $(COMPOSE_FILE) exec redis redis-cli ping || echo "$(RED)❌ Redis not responding$(NC)"
 
-# Show resource usage
-resources:
-	@echo "💻 Resource Usage:"
-	docker stats --no-stream
+.PHONY: install-deps
+install-deps: ## Install development dependencies
+	@echo "$(GREEN)📦 Installing development dependencies...$(NC)"
+	@pip3 install -r config/docker/requirements.txt --break-system-packages
+	@cd app && npm install
+	@echo "$(GREEN)✅ Dependencies installed!$(NC)"
 
-# Quick development commands
-dev:
-	@echo "🚀 Quick development commands:"
-	@echo "  make up     - Start everything"
-	@echo "  make health - Check health"
-	@echo "  make logs   - Monitor logs"
-	@echo "  make test   - Run tests"
-	@echo "  make down   - Stop everything"
+# =============================================================================
+# 📚 **Documentation & Help**
+# =============================================================================
+
+.PHONY: docs
+docs: ## Open project documentation
+	@echo "$(GREEN)📚 Opening project documentation...$(NC)"
+	@echo "$(YELLOW)📖 README: README.md$(NC)"
+	@echo "$(YELLOW)🏗️ Structure: PROJECT_STRUCTURE.md$(NC)"
+	@echo "$(YELLOW)📋 Requirements: docs/requirements/PRD.md$(NC)"
+	@echo "$(YELLOW)🚀 Deployment: docs/deployment/deploy.md$(NC)"
+	@echo "$(YELLOW)🧪 Testing: tests/$(NC)"
+	@echo "$(YELLOW)📜 Scripts: scripts/$(NC)"
+
+.PHONY: structure
+structure: ## Show project structure
+	@echo "$(GREEN)🏗️ Gizmo AI Project Structure$(NC)"
+	@echo "================================"
+	@tree -I 'node_modules|__pycache__|*.pyc|.git|.next|.env*' -a
+
+# =============================================================================
+# 🚀 **Quick Start Commands**
+# =============================================================================
+
+.PHONY: quickstart
+quickstart: ## Quick start for new developers
+	@echo "$(GREEN)🚀 Gizmo AI Quick Start$(NC)"
+	@echo "========================"
+	@echo "$(YELLOW)1. Start the stack:$(NC) make up"
+	@echo "$(YELLOW)2. Check health:$(NC) make health"
+	@echo "$(YELLOW)3. View logs:$(NC) make logs"
+	@echo "$(YELLOW)4. Run tests:$(NC) make test"
+	@echo "$(YELLOW)5. Stop stack:$(NC) make down"
+	@echo ""
+	@echo "$(GREEN)🌐 Open http://localhost:3002 to see the UI!$(NC)"
+
+# =============================================================================
+# 🎯 **Portfolio & Demo Commands**
+# =============================================================================
+
+.PHONY: demo
+demo: ## Run complete portfolio demonstration
+	@echo "$(GREEN)🎬 Running Gizmo AI Portfolio Demo$(NC)"
+	@echo "================================"
+	@echo "$(YELLOW)1. Starting development stack...$(NC)"
+	@make up
+	@echo "$(YELLOW)2. Waiting for services to be ready...$(NC)"
+	@sleep 10
+	@echo "$(YELLOW)3. Checking service health...$(NC)"
+	@make health
+	@echo "$(YELLOW)4. Running curated task suite...$(NC)"
+	@make test-curated
+	@echo "$(YELLOW)5. Running UI demonstration...$(NC)"
+	@make demo-ui
+	@echo "$(GREEN)🎉 Demo completed! Open http://localhost:3002$(NC)"
+
+.PHONY: portfolio
+portfolio: ## Show portfolio-ready features
+	@echo "$(GREEN)🎯 Gizmo AI Portfolio Features$(NC)"
+	@echo "================================"
+	@echo "$(GREEN)✅ Multi-Agent AI Development Platform$(NC)"
+	@echo "$(GREEN)✅ Enterprise-Grade Reliability Features$(NC)"
+	@echo "$(GREEN)✅ Professional UI with Real-time Updates$(NC)"
+	@echo "$(GREEN)✅ Comprehensive Testing & Documentation$(NC)"
+	@echo "$(GREEN)✅ Production Deployment Ready$(NC)"
+	@echo "$(GREEN)✅ Cost-Controlled Public Demo$(NC)"
+	@echo ""
+	@echo "$(YELLOW)🚀 Ready for portfolio demonstration!$(NC)"
+
+# =============================================================================
+# 📋 **Default Target**
+# =============================================================================
+
+.DEFAULT_GOAL := help

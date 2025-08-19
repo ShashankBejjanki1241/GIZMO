@@ -1,10 +1,27 @@
+# =============================================================================
+# Gizmo AI - Professional .gitignore
+# =============================================================================
+
+# Environment and Configuration
+.env
+.env.*
+env.template
+*.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# API Keys and Secrets
+api/.env
+orchestrator/.env
+**/secrets/
+**/keys/
+*.key
+*.pem
+
 # Dependencies
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -27,86 +44,123 @@ wheels/
 *.egg
 MANIFEST
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Python Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
 
-# Logs
+# Logs and Temporary Files
 logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+.tmp/
+temp/
 
-# Runtime data
+# Runtime Data
 pids
 *.pid
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
+# Coverage Directory
 coverage/
 *.lcov
-
-# nyc test coverage
 .nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
+.coverage
+.coverage.*
 .cache
-.parcel-cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
 
-# Next.js build output
-.next
-out
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
-.cache/
-public
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
-tmp/
-temp/
-
-# Editor directories and files
+# IDE and Editor Files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.DS_Store
+Thumbs.db
 
-# OS generated files
+# Build Outputs
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Testing
+.coverage
+.pytest_cache/
+test-results/
+junit.xml
+
+# Documentation (Exclude from production repo)
+docs/
+*.md
+!README.md
+!LICENSE
+!CHANGELOG.md
+
+# Development and Demo Files
+scripts/
+demo_*.py
+test_*.py
+*_demo.py
+*_test.py
+curated_*.py
+
+# Phase Summaries and Development History
+PHASE*.md
+*_SUMMARY.md
+*_TEST_RESULTS.md
+
+# Project Management Files
+PROJECT_STRUCTURE.md
+PROJECT_INDEX.md
+FILE_STATUS_INDEX.md
+CURSOR_RULES_OVERVIEW.md
+BACKLOG.md
+SHOWCASE_TASKS.md
+SCOPE*.md
+
+# Configuration Examples
+config/deployment/
+config/docker/
+vercel.json
+fly.toml
+docker-compose.yml
+Dockerfile.*
+
+# Cursor Rules (Development Only)
+.cursor/
+
+# Assets and Screenshots
+assets/
+screenshots/
+diagrams/
+
+# Backup and Temporary Files
+*.bak
+*.tmp
+*.temp
+backup_*
+*.sql
+
+# OS Generated Files
 .DS_Store
 .DS_Store?
 ._*
@@ -115,14 +169,19 @@ temp/
 ehthumbs.db
 Thumbs.db
 
-# Cursor rules (IDE-specific)
-.cursor/
+# Git
+.git/
+.gitignore
+.gitattributes
 
-# Documentation files that are not essential
-BACKLOG.md
-CURSOR_RULES_OVERVIEW.md
-FILE_STATUS_INDEX.md
-PROJECT_INDEX.md
-SCOPE_LOCK_AGREEMENT.md
-SCOPE_SUMMARY.md
-SHOWCASE_TASKS.md
+# Keep Essential Files
+!README.md
+!LICENSE
+!CHANGELOG.md
+!requirements.txt
+!package.json
+!package-lock.json
+!tsconfig.json
+!next.config.js
+!tailwind.config.js
+!postcss.config.js

@@ -819,3 +819,27 @@ if __name__ == '__main__':
                     artifacts["logs"].append(str(log_file.name))
         
         return artifacts
+
+    def get_info(self) -> Dict[str, Any]:
+        """Get sandbox information for Phase 7 metrics"""
+        try:
+            files = []
+            if self.repo_path.exists():
+                for file_path in self.repo_path.rglob("*"):
+                    if file_path.is_file():
+                        files.append(str(file_path.relative_to(self.repo_path)))
+            
+            return {
+                "root": str(self.repo_path),
+                "files": files,
+                "template": self.template,
+                "task_id": self.task_id
+            }
+        except Exception as e:
+            return {
+                "root": str(self.repo_path),
+                "files": [],
+                "template": self.template,
+                "task_id": self.task_id,
+                "error": str(e)
+            }

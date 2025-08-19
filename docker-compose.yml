@@ -1,3 +1,10 @@
+# Gizmo AI - Docker Compose Configuration
+# Local development environment setup
+#
+# Developer: Shashank B
+# Repository: https://github.com/ShashankBejjanki1241/GIZMO
+# Last Updated: December 2024
+
 version: '3.8'
 
 services:

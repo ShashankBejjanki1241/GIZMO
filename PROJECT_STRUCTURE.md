@@ -1,5 +1,13 @@
 # 🏗️ **Gizmo AI - Project Structure Overview**
 
+## 👨‍💻 **Developer Information**
+
+**Shashank B**  
+*Lead Developer & Architect*  
+*Last Updated: December 2024*
+
+---
+
 ## 📁 **Root Directory Structure**
 
 ```

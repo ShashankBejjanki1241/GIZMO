@@ -1,6 +1,10 @@
 """
 Gizmo AI - Secure Sandbox Execution
 Implements safe execution with network isolation, resource limits, and rollback
+
+Developer: Shashank B
+Repository: https://github.com/ShashankBejjanki1241/GIZMO
+Last Updated: December 2024
 """
 
 import asyncio

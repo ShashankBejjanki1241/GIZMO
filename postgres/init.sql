@@ -1,4 +1,11 @@
 -- Gizmo AI Database Initialization
+-- PostgreSQL schema and table creation for the Gizmo AI platform
+--
+-- Developer: Shashank B
+-- Repository: https://github.com/ShashankBejjanki1241/GIZMO
+-- Last Updated: December 2024
+
+-- Gizmo AI Database Initialization
 
 CREATE TABLE IF NOT EXISTS tasks (
     id SERIAL PRIMARY KEY,

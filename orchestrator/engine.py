@@ -1,6 +1,10 @@
 """
 Gizmo AI - Orchestrator Engine
 Main orchestration logic for coordinating agents with deterministic state machine
+
+Developer: Shashank B
+Repository: https://github.com/ShashankBejjanki1241/GIZMO
+Last Updated: December 2024
 """
 
 import os

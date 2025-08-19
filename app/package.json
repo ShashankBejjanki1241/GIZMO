@@ -2,6 +2,8 @@
   "name": "gizmo-ai-frontend",
   "version": "1.0.0",
   "description": "Gizmo AI - Multi-Agent AI Developer Platform Frontend",
+  "author": "Shashank B",
+  "repository": "https://github.com/ShashankBejjanki1241/GIZMO",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3002",

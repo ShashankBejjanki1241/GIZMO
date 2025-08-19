@@ -1,4 +1,9 @@
 # Gizmo AI - Essential Python Dependencies
+# 
+# Developer: Shashank B
+# Repository: https://github.com/ShashankBejjanki1241/GIZMO
+# Last Updated: December 2024
+#
 
 # Core Framework
 fastapi==0.104.1

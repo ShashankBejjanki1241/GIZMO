@@ -1,3 +1,12 @@
+/**
+ * Gizmo AI - TypeScript Type Definitions
+ * Core interfaces and types for the frontend application
+ * 
+ * Developer: Shashank B
+ * Repository: https://github.com/ShashankBejjanki1241/GIZMO
+ * Last Updated: December 2024
+ */
+
 // Types for the enhanced Gizmo AI UI
 
 export interface TaskEvent {

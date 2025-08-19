@@ -1,5 +1,13 @@
 # 🎯 **Gizmo AI - Complete Project Index**
 
+## 👨‍💻 **Developer Information**
+
+**Shashank B**  
+*Lead Developer & Architect*  
+*Last Updated: December 2024*
+
+---
+
 ## 📁 **Project Overview**
 
 **Gizmo AI** is a comprehensive, portfolio-ready Multi-Agent AI Developer Platform that demonstrates transparent, safe, and demo-able AI-powered software development with real-time visibility into the planning→coding→testing loop.

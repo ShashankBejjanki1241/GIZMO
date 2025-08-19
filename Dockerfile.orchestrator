@@ -1,3 +1,10 @@
+# Gizmo AI - Orchestrator Service Dockerfile
+# Production-ready container for the AI orchestration engine
+#
+# Developer: Shashank B
+# Repository: https://github.com/ShashankBejjanki1241/GIZMO
+# Last Updated: December 2024
+
 FROM python:3.11-slim
 
 WORKDIR /app

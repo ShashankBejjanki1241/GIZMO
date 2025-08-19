@@ -1,6 +1,10 @@
 """
 Gizmo AI - FastAPI Backend
 Main application entry point with health endpoints and logging
+
+Developer: Shashank B
+Repository: https://github.com/ShashankBejjanki1241/GIZMO
+Last Updated: December 2024
 """
 
 import os

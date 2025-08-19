@@ -1,4 +1,9 @@
 # 🚀 **Gizmo AI - Development Automation**
+# Comprehensive development commands and automation
+#
+# Developer: Shashank B
+# Repository: https://github.com/ShashankBejjanki1241/GIZMO
+# Last Updated: December 2024
 
 # Configuration
 COMPOSE_FILE = config/docker/docker-compose.yml

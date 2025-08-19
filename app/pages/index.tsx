@@ -1,3 +1,12 @@
+/**
+ * Gizmo AI - Main Application Page
+ * Real-time task orchestration and monitoring interface
+ * 
+ * Developer: Shashank B
+ * Repository: https://github.com/ShashankBejjanki1241/GIZMO
+ * Last Updated: December 2024
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { TaskEvent, Task, SystemHealth } from '../types';
 
@@ -679,6 +688,35 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
+      {/* Footer */}
+      <footer className="bg-gray-50 border-t mt-12">
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-500">
+              <span>Built with ❤️ by </span>
+              <a 
+                href="https://github.com/ShashankBejjanki1241" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="font-medium text-gray-700 hover:text-gray-900"
+              >
+                Shashank B
+              </a>
+            </div>
+            <div className="text-sm text-gray-500">
+              <a 
+                href="https://github.com/ShashankBejjanki1241/GIZMO" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-gray-700"
+              >
+                View on GitHub
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

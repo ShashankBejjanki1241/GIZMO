@@ -1,3 +1,12 @@
+"""
+Gizmo AI - Protocol Definitions
+Data models and contracts for inter-agent communication
+
+Developer: Shashank B
+Repository: https://github.com/ShashankBejjanki1241/GIZMO
+Last Updated: December 2024
+"""
+
 from pydantic import BaseModel, Field
 from typing import List, Optional, Literal
 from uuid import uuid4

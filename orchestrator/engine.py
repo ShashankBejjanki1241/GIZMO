@@ -18,8 +18,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 # Import local modules
-from .protocol import TaskRequest, Message, Role, MsgType
-from .sandbox import Sandbox
+from protocol import TaskRequest, Message, Role, MsgType
+from sandbox import SecureSandbox, PatchResult
 
 # Configure structured logging
 structlog.configure(
@@ -348,13 +348,26 @@ class Orchestrator:
         return task_run
     
     async def _execute_task(self, task_run: TaskRun):
-        """Execute the main task loop"""
+        """Execute the main task loop with secure sandbox"""
+        sandbox = None
         try:
             # State 1: STARTING
             await self._emit_event(task_run, TaskState.STARTING, {
                 "message": "Task execution started",
                 "template": task_run.template,
                 "instruction": task_run.instruction
+            })
+            
+            # Initialize secure sandbox
+            sandbox = SecureSandbox(task_run.task_id, task_run.template)
+            sandbox_ready = await sandbox.prepare()
+            
+            if not sandbox_ready:
+                raise Exception("Failed to initialize secure sandbox")
+            
+            await self._emit_event(task_run, TaskState.STARTING, {
+                "message": "Secure sandbox initialized",
+                "sandbox_info": sandbox.describe_repo()
             })
             
             # State 2: PLANNING
@@ -387,10 +400,24 @@ class Orchestrator:
                 "agent": "coder"
             })
             
-            # State 4: DIFF_APPLIED
+            # State 4: DIFF_APPLIED - Apply patch securely
             await self._emit_event(task_run, TaskState.DIFF_APPLIED, {
-                "message": "Code changes applied to repository",
-                "diff": diff
+                "message": "Applying code changes securely",
+                "agent": "coder"
+            })
+            
+            patch_result = await sandbox.apply_patch(diff)
+            
+            if not patch_result.success:
+                raise Exception(f"Patch application failed: {patch_result.error_message}")
+            
+            await self._emit_event(task_run, TaskState.DIFF_APPLIED, {
+                "message": "Code changes applied successfully",
+                "diff": diff,
+                "patch_result": {
+                    "applied_files": patch_result.applied_files,
+                    "diff_stats": patch_result.diff_stats
+                }
             })
             
             # State 5: TESTING
@@ -399,8 +426,8 @@ class Orchestrator:
                 "agent": "tester"
             })
             
-            # Simulate test execution
-            test_results = await self._run_tests(task_run)
+            # Run tests in secure sandbox
+            test_results = await sandbox.run_tests()
             task_run.current_agent = "tester"
             
             await self._emit_event(task_run, TaskState.TESTING, {
@@ -424,14 +451,15 @@ class Orchestrator:
             })
             
             # State 7: DONE
-            task_run.state = TaskState.DONE
             await self._emit_event(task_run, TaskState.DONE, {
                 "message": "Task completed successfully",
                 "final_results": {
                     "plan": plan,
                     "diff": diff,
+                    "patch_result": patch_result,
                     "test_results": test_results,
-                    "test_report": test_report
+                    "test_report": test_report,
+                    "artifacts": sandbox.get_artifacts()
                 }
             })
             
@@ -448,6 +476,14 @@ class Orchestrator:
             })
             
             logger.error("Task failed", task_id=task_run.task_id, run_id=task_run.run_id, error=str(e))
+            
+        finally:
+            # Cleanup sandbox
+            if sandbox:
+                try:
+                    await sandbox.cleanup()
+                except Exception as cleanup_error:
+                    logger.error("Sandbox cleanup failed", error=str(cleanup_error))
     
     async def _emit_event(self, task_run: TaskRun, stage: TaskState, data: Dict[str, Any]):
         """Emit a task event and broadcast to WebSocket clients"""
@@ -481,19 +517,7 @@ class Orchestrator:
         # Broadcast to WebSocket clients
         await manager.broadcast_event(event)
     
-    async def _run_tests(self, task_run: TaskRun) -> Dict[str, Any]:
-        """Simulate test execution"""
-        await asyncio.sleep(0.2)  # Simulate test execution time
-        
-        # Return deterministic test results
-        return {
-            "passed": 3,
-            "failed": 0,
-            "total": 3,
-            "stdout": "✓ All tests passed",
-            "stderr": "",
-            "execution_time": "0.2s"
-        }
+
 
 # Global orchestrator instance
 orchestrator = Orchestrator()

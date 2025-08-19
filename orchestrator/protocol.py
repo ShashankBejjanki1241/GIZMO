@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Literal
 from uuid import uuid4
+import time
 
 Role = Literal["planner","coder","tester","orchestrator","user","system"]
 MsgType = Literal["plan","code_patch","test_report","status","request"]
@@ -17,7 +18,7 @@ class Message(BaseModel):
     recipient: Role
     content: str
     artifacts: List[Artifact] = []
-    ts: float
+    ts: float = Field(default_factory=time.time)
 
 class TaskRequest(BaseModel):
     task_id: str

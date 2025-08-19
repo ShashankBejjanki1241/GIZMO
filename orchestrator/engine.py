@@ -12,6 +12,10 @@ from contextlib import asynccontextmanager
 from enum import Enum
 from datetime import datetime
 
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()
+
 import structlog
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,7 +26,6 @@ from protocol import TaskRequest, Message, Role, MsgType
 from sandbox import SecureSandbox, PatchResult
 import openai
 import json
-import os
 from typing import Optional, Dict, Any
 
 # Configure structured logging

@@ -99,6 +99,48 @@ class SecureSandbox:
     
     async def _create_template_repo(self):
         """Create a minimal template repository"""
+        # Prefer seeding from repo templates if available
+        try:
+            templates_root = self._get_templates_root()
+            if templates_root:
+                source_dir = templates_root / self.template
+                if source_dir.exists() and source_dir.is_dir():
+                    # Ensure repo directory exists and is empty
+                    for child in self.repo_path.iterdir():
+                        if child.is_file():
+                            child.unlink()
+                        else:
+                            shutil.rmtree(child)
+                    shutil.copytree(source_dir, self.repo_path, dirs_exist_ok=True)
+                else:
+                    self._create_built_in_template()
+            else:
+                self._create_built_in_template()
+        except Exception:
+            # Fallback to built-in templates on any error
+            self._create_built_in_template()
+        
+        # Initialize git
+        await self._git_init()
+
+    def _get_templates_root(self) -> Optional[Path]:
+        """Locate the templates root directory in different runtimes"""
+        candidates = [
+            # Running in container (compose mounts ./templates -> /app/templates)
+            Path("/app/templates"),
+            # Running locally from project root
+            Path(__file__).resolve().parents[2] / "templates",
+        ]
+        for candidate in candidates:
+            try:
+                if candidate.exists() and candidate.is_dir():
+                    return candidate
+            except Exception:
+                continue
+        return None
+
+    def _create_built_in_template(self):
+        """Fallback minimal templates if repo templates are unavailable"""
         if self.template == "react":
             self._create_react_template()
         elif self.template == "express":
@@ -107,9 +149,6 @@ class SecureSandbox:
             self._create_flask_template()
         else:
             self._create_generic_template()
-        
-        # Initialize git
-        await self._git_init()
     
     def _create_react_template(self):
         """Create React template files"""

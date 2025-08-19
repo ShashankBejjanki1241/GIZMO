@@ -1,0 +1,21 @@
+{
+  "name": "gizmo-express-golden-template",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "jest --ci --colors"
+  },
+  "dependencies": {
+    "express": "4.18.2"
+  },
+  "devDependencies": {
+    "jest": "29.7.0",
+    "supertest": "6.3.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/src"],
+    "transform": {}
+  }
+}

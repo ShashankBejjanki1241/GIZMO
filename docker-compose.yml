@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: gizmo_postgres
+    environment:
+      POSTGRES_DB: gizmo_dev
+      POSTGRES_USER: gizmo_user
+      POSTGRES_PASSWORD: gizmo_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gizmo_user -d gizmo_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gizmo_network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: gizmo_redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gizmo_network
+
+  # FastAPI Backend
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: gizmo_api
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=gizmo_dev
+      - DB_USER=gizmo_user
+      - DB_PASSWORD=gizmo_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - LOG_LEVEL=INFO
+      - DEBUG=true
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./api:/app
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - gizmo_network
+
+  # Next.js Frontend
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    container_name: gizmo_ui
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8002
+      - NODE_ENV=development
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - gizmo_network
+
+  # Orchestrator Service
+  orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.orchestrator
+    container_name: gizmo_orchestrator
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=gizmo_dev
+      - DB_USER=gizmo_user
+      - DB_PASSWORD=gizmo_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - API_URL=http://api:8000
+      - LOG_LEVEL=INFO
+      - DEBUG=true
+    ports:
+      - "8003:8001"
+    volumes:
+      - ./orchestrator:/app
+      - ./logs:/app/logs
+      - ./templates:/app/templates
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - gizmo_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  gizmo_network:
+    driver: bridge
